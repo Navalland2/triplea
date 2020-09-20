@@ -15,6 +15,7 @@ import org.triplea.swing.SwingAction;
 import org.triplea.swing.SwingComponents;
 import tools.map.making.ui.properties.MapPropertiesPanel;
 import tools.map.making.ui.skin.MapSkinPanel;
+import tools.map.making.ui.upload.UploadMapPanel;
 import tools.map.making.ui.utilities.OptionalUtilitiesPanel;
 import tools.map.making.ui.xml.XmlUtilitiesPanel;
 
@@ -33,6 +34,7 @@ public class MapCreator {
     final JPanel panel2 = MapSkinPanel.build();
     final JPanel panel3 = XmlUtilitiesPanel.build();
     final JPanel panel4 = OptionalUtilitiesPanel.build();
+    final JPanel panel5 = UploadMapPanel.build();
 
     final JPanel mainPanel = new JPanel();
     mainPanel.add(panel1);
@@ -65,6 +67,13 @@ public class MapCreator {
     sidePanel.add(
         new JButtonBuilder("Other: Optional Things")
             .actionListener(() -> swapContainerContents(mainPanel, panel4))
+            .alignmentX(AlignmentX.CENTER)
+            .build());
+    sidePanel.add(Box.createVerticalGlue());
+
+    sidePanel.add(
+        new JButtonBuilder("Map Upload")
+            .actionListener(() -> swapContainerContents(mainPanel, panel5))
             .alignmentX(AlignmentX.CENTER)
             .build());
     sidePanel.add(Box.createVerticalGlue());
