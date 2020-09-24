@@ -1,5 +1,6 @@
 package tools.map.making;
 
+import games.strategy.triplea.settings.ClientSetting;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import javax.swing.Box;
@@ -34,7 +35,7 @@ public class MapCreator {
     final JPanel panel2 = MapSkinPanel.build();
     final JPanel panel3 = XmlUtilitiesPanel.build();
     final JPanel panel4 = OptionalUtilitiesPanel.build();
-    final JPanel panel5 = UploadMapPanel.build();
+    final JPanel panel5 = UploadMapPanel.build(frame);
 
     final JPanel mainPanel = new JPanel();
     mainPanel.add(panel1);
@@ -71,12 +72,14 @@ public class MapCreator {
             .build());
     sidePanel.add(Box.createVerticalGlue());
 
-    sidePanel.add(
-        new JButtonBuilder("Map Upload")
-            .actionListener(() -> swapContainerContents(mainPanel, panel5))
-            .alignmentX(AlignmentX.CENTER)
-            .build());
-    sidePanel.add(Box.createVerticalGlue());
+    if (ClientSetting.showBetaFeatures.getValueOrThrow()) {
+      sidePanel.add(
+          new JButtonBuilder("Map Upload")
+              .actionListener(() -> swapContainerContents(mainPanel, panel5))
+              .alignmentX(AlignmentX.CENTER)
+              .build());
+      sidePanel.add(Box.createVerticalGlue());
+    }
 
     // set up the menu actions
     frame.getContentPane().setLayout(new BorderLayout());

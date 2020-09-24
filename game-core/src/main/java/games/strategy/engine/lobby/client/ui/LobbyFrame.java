@@ -36,7 +36,8 @@ public class LobbyFrame extends JFrame implements QuitHandler {
   private final ChatTransmitter chatTransmitter;
   private final LobbyGameTableModel tableModel;
 
-  public LobbyFrame(final LobbyClient lobbyClient, final ServerProperties serverProperties) {
+  public LobbyFrame(
+      final LobbyClient lobbyClient, final ServerProperties serverProperties) {
     super("TripleA Lobby");
     setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     setIconImage(JFrameBuilder.getGameIcon());

@@ -16,8 +16,11 @@ import games.strategy.engine.framework.startup.ui.SetupPanel;
 import games.strategy.engine.framework.startup.ui.panels.main.game.selector.GameSelectorModel;
 import games.strategy.engine.framework.startup.ui.posted.game.pbem.PbemSetupPanel;
 import games.strategy.engine.framework.startup.ui.posted.game.pbf.PbfSetupPanel;
+import games.strategy.engine.framework.ui.MainFrame;
+import games.strategy.engine.lobby.client.LobbyClient;
 import games.strategy.engine.lobby.client.login.LobbyLogin;
-import games.strategy.triplea.UrlConstants;
+import games.strategy.engine.lobby.client.login.LoginMode;
+import games.strategy.engine.lobby.client.ui.LobbyFrame;
 import java.awt.Dimension;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -30,9 +33,7 @@ import lombok.Setter;
 import org.triplea.game.startup.ServerSetupModel;
 import org.triplea.http.client.lobby.game.hosting.request.GameHostingResponse;
 import org.triplea.live.servers.LiveServersFetcher;
-import org.triplea.live.servers.ServerProperties;
 import org.triplea.swing.SwingComponents;
-import org.triplea.swing.SwingComponents.DialogWithLinksParams;
 
 /** This class provides a way to switch between different ISetupPanel displays. */
 @RequiredArgsConstructor
@@ -130,22 +131,20 @@ public class SetupPanelModel implements ServerSetupModel {
    * user is presented with another try or they can abort. In the abort case this method is a no-op.
    */
   public void login() {
-    final ServerProperties serverProperties = new LiveServersFetcher().serverForCurrentVersion();
+    LiveServersFetcher.fetch()
+        .ifPresent(
+            serverProperties ->
+                new LobbyLogin(ui, serverProperties)
+                    .promptLogin(LoginMode.REGISTRATION_NOT_REQUIRED)
+                    .ifPresent(
+                        loginResult -> {
+                          final var lobbyClient =
+                              LobbyClient.newLobbyClient(serverProperties.getUri(), loginResult);
 
-    if (serverProperties.isInactive()) {
-      SwingComponents.showDialogWithLinks(
-          DialogWithLinksParams.builder()
-              .title("Lobby Not Available")
-              .dialogText(
-                  String.format(
-                      "Your version of TripleA is out of date, please download the latest:"
-                          + "<br><a href=\"%s\">%s</a>",
-                      UrlConstants.DOWNLOAD_WEBSITE, UrlConstants.DOWNLOAD_WEBSITE))
-              .dialogType(SwingComponents.DialogWithLinksTypes.ERROR)
-              .build());
-      return;
-    }
-
-    new LobbyLogin(ui, serverProperties).promptLogin();
+                          final LobbyFrame lobbyFrame =
+                              new LobbyFrame(lobbyClient, serverProperties);
+                          MainFrame.hide();
+                          lobbyFrame.setVisible(true);
+                        }));
   }
 }

@@ -1,6 +1,7 @@
 package tools.map.making.ui.upload;
 
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import org.triplea.swing.JButtonBuilder;
@@ -9,29 +10,50 @@ import org.triplea.swing.jpanel.JPanelBuilder;
 
 public class UploadMapPanel {
 
-  public static JPanel build() {
-    final JButton loginButton = new JButtonBuilder("Lobby Login").build();
-    final JTextArea loginStatus = buildTextArea();
+  public static JPanel build(final JFrame parentWindow) {
+    final JButton selectMapButton = new JButton("Select Map");
+    final JTextArea mapSelectionStatus = buildTextArea();
 
-    final JButton selectMapButton = new JButtonBuilder("Select Map").enabled(false).build();
-    final JTextArea mapStatus = buildTextArea();
+    final JTextArea validationStatus = buildTextArea();
+    final JButton validateMapButton = new JButtonBuilder("Validate Map").enabled(false).build();
+
+    final JTextArea loginStatus = buildTextArea();
+    final JButton loginButton = new JButtonBuilder("Lobby Login").enabled(false).build();
 
     final JButton uploadButton = new JButtonBuilder("Upload").enabled(false).build();
     final JTextArea uploadStatus = buildTextArea();
+
+    final UploadPanelState uploadPanelState =
+        UploadPanelState.builder()
+            .selectMapButton(selectMapButton)
+            .validateMapButton(validateMapButton)
+            .lobbyLoginButton(loginButton)
+            .uploadMapButton(uploadButton)
+            .build();
+
+    selectMapButton.addActionListener(
+        new MapSelectionAction(parentWindow, uploadPanelState, mapSelectionStatus));
+    validateMapButton.addActionListener(new ValidateMapAction(uploadPanelState, validationStatus));
+    loginButton.addActionListener(new LoginAction(uploadPanelState, loginStatus));
+    uploadButton.addActionListener(new UploadAction());
 
     return new JPanelBuilder()
         .borderLayout()
         .addCenter(
             new JPanelBuilder()
-                .gridLayout(6, 2)
+                .gridLayout(8, 2)
+                .add(new JPanel())
+                .add(new JPanel())
+                .add(selectMapButton)
+                .add(mapSelectionStatus)
+                .add(new JPanel())
+                .add(new JPanel())
+                .add(validateMapButton)
+                .add(validationStatus)
                 .add(new JPanel())
                 .add(new JPanel())
                 .add(loginButton)
                 .add(loginStatus)
-                .add(new JPanel())
-                .add(new JPanel())
-                .add(selectMapButton)
-                .add(mapStatus)
                 .add(new JPanel())
                 .add(new JPanel())
                 .add(uploadButton)
