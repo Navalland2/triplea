@@ -5,7 +5,5 @@ import java.awt.event.ActionListener;
 
 public class UploadAction implements ActionListener {
   @Override
-  public void actionPerformed(final ActionEvent actionEvent) {
-
-  }
+  public void actionPerformed(final ActionEvent actionEvent) {}
 }
